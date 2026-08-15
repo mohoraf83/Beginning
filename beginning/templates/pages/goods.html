@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مدیریت کالاها</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f1f5f9;
+    }
+    .modal-overlay {
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+    }
+    /* انیمیشن برای نمایش جدول */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+    /* اسکرول برای جدول */
+    .table-wrapper {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .table-wrapper::-webkit-scrollbar {
+      width: 6px;
+    }
+    .table-wrapper::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- ====== نوار کناری ====== -->
+  <aside class="w-72 bg-white shadow-xl border-l border-gray-200 flex-shrink-0 flex flex-col">
+    <div class="p-5 border-b border-gray-200 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white text-xl shadow-md">
+        <i class="fas fa-calculator"></i>
+      </div>
+      <span class="text-xl font-bold text-gray-800">حساب‌یار</span>
+      <span class="text-xs text-gray-400 mr-auto">v1.0</span>
+    </div>
+
+    <nav class="flex-1 p-4 overflow-y-auto">
+      <ul class="space-y-2">
+        <li>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all">
+            <i class="fas fa-file-invoice text-blue-600 w-6 text-center"></i>
+            <span class="font-medium">فاکتور کالاها</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all">
+            <i class="fas fa-users text-emerald-600 w-6 text-center"></i>
+            <span class="font-medium">ثبت مشتریان</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all">
+            <i class="fas fa-clock-rotate-left text-amber-600 w-6 text-center"></i>
+            <span class="font-medium">تاریخچه</span>
+          </a>
+        </li>
+        <li class="pt-4 mt-4 border-t border-gray-200"></li>
+        <li>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg bg-blue-50 text-blue-700 menu-active border-r-4 border-blue-600">
+            <i class="fas fa-boxes text-blue-600 w-6 text-center"></i>
+            <span class="font-medium">مدیریت کالا</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all">
+            <i class="fas fa-chart-pie text-purple-600 w-6 text-center"></i>
+            <span class="font-medium">گزارشات</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all">
+            <i class="fas fa-gear text-gray-500 w-6 text-center"></i>
+            <span class="font-medium">تنظیمات</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="p-4 border-t border-gray-200">
+      <div class="flex items-center gap-3 px-2 py-2 rounded-lg bg-gray-50">
+        <div class="w-9 h-9 rounded-full bg-blue-200 flex items-center justify-center text-blue-700">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-gray-800">مدیر سیستم</p>
+          <p class="text-xs text-gray-500">admin@account.ir</p>
+        </div>
+        <button class="text-gray-400 hover:text-red-500 transition-colors">
+          <i class="fas fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====== محتوای اصلی ====== -->
+  <main class="flex-1 overflow-y-auto p-6 md:p-8">
+
+    <!-- هدر -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">مدیریت کالاها</h1>
+        <p class="text-gray-500 text-sm mt-1">لیست کالاها را مشاهده، اضافه یا حذف کنید</p>
+      </div>
+      <button id="showAddModalBtn" class="mt-4 sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-2 text-sm font-medium">
+        <i class="fas fa-plus"></i>
+        افزودن کالا
+      </button>
+    </div>
+
+    <!-- کارت آماری کالاها -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm">تعداد کل کالاها</p>
+          <p class="text-2xl font-bold text-gray-800" id="totalCount">۰</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-xl">
+          <i class="fas fa-box"></i>
+        </div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm">ارزش کل موجودی</p>
+          <p class="text-2xl font-bold text-gray-800" id="totalValue">۰</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-xl">
+          <i class="fas fa-toman"></i>
+        </div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm">کالاهای فعال</p>
+          <p class="text-2xl font-bold text-gray-800" id="activeCount">۰</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 text-xl">
+          <i class="fas fa-check-circle"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- جدول کالاها -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="font-semibold text-gray-800"><i class="fas fa-list ml-2 text-blue-600"></i> لیست کالاها</h2>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-gray-500" id="rowCount">۰ ردیف</span>
+          <button id="clearAllBtn" class="text-sm text-red-500 hover:text-red-700 transition-colors">
+            <i class="fas fa-trash"></i> حذف همه
+          </button>
+        </div>
+      </div>
+
+      <!-- wrapper برای اسکرول -->
+      <div class="table-wrapper">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+            <tr class="text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th class="px-6 py-3">#</th>
+              <th class="px-6 py-3">نام کالا</th>
+              <th class="px-6 py-3">دسته‌بندی</th>
+              <th class="px-6 py-3">قیمت (ریال)</th>
+              <th class="px-6 py-3">موجودی</th>
+              <th class="px-6 py-3">وضعیت</th>
+              <th class="px-6 py-3 text-center">عملیات</th>
+            </tr>
+          </thead>
+          <tbody id="productTableBody" class="divide-y divide-gray-100">
+            <!-- ردیف‌ها توسط جاوااسکریپت اضافه می‌شوند -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- پیام خالی بودن جدول -->
+      <div id="emptyState" class="py-16 text-center">
+        <div class="text-6xl text-gray-300 mb-4">
+          <i class="fas fa-box-open"></i>
+        </div>
+        <p class="text-gray-500 text-lg font-medium">هنوز کالایی ثبت نشده است</p>
+        <p class="text-gray-400 text-sm mt-1">برای شروع، دکمه "افزودن کالا" را کلیک کنید</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ====== مودال افزودن کالا ====== -->
+<div id="addModal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6 fade-in">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-xl font-bold text-gray-800">
+        <i class="fas fa-plus-circle text-blue-600 ml-2"></i> افزودن کالا
+      </h3>
+      <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition-colors text-xl">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <form id="productForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">نام کالا <span class="text-red-500">*</span></label>
+        <input type="text" id="productName" required placeholder="مثال: لپ‌تاپ ایسوس" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">دسته‌بندی</label>
+        <input type="text" id="productCategory" placeholder="مثال: الکترونیک" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">قیمت (ریال) <span class="text-red-500">*</span></label>
+        <input type="number" id="productPrice" required placeholder="۰" min="0" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">موجودی <span class="text-red-500">*</span></label>
+        <input type="number" id="productStock" required placeholder="۰" min="0" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">وضعیت</label>
+        <select id="productStatus" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+          <option value="فعال">فعال</option>
+          <option value="غیرفعال">غیرفعال</option>
+          <option value="ناموجود">ناموجود</option>
+        </select>
+      </div>
+
+      <div class="flex gap-3 pt-3">
+        <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-medium transition-all">
+          <i class="fas fa-save ml-2"></i> ذخیره کالا
+        </button>
+        <button type="button" id="cancelModalBtn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2.5 rounded-xl font-medium transition-all">
+          انصراف
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ====== مدیریت داده‌ها ======
+  let products = [];
+
+  // ارجاع به عناصر DOM
+  const tbody = document.getElementById('productTableBody');
+  const emptyState = document.getElementById('emptyState');
+  const totalCount = document.getElementById('totalCount');
+  const totalValue = document.getElementById('totalValue');
+  const activeCount = document.getElementById('activeCount');
+  const rowCount = document.getElementById('rowCount');
+
+  // مودال
+  const modal = document.getElementById('addModal');
+  const showBtn = document.getElementById('showAddModalBtn');
+  const closeBtn = document.getElementById('closeModalBtn');
+  const cancelBtn = document.getElementById('cancelModalBtn');
+  const form = document.getElementById('productForm');
+
+  // ====== توابع کمکی ======
+  function formatPrice(price) {
+    return parseInt(price).toLocaleString('fa-IR');
+  }
+
+  function updateStats() {
+    const total = products.length;
+    const totalVal = products.reduce((sum, p) => sum + Number(p.price) * Number(p.stock), 0);
+    const active = products.filter(p => p.status === 'فعال').length;
+
+    totalCount.textContent = total;
+    totalValue.textContent = totalVal.toLocaleString('fa-IR');
+    activeCount.textContent = active;
+    rowCount.textContent = `${total} ردیف`;
+  }
+
+  function renderTable() {
+    // پاک کردن tbody (به جز emptyState که جداگانه مدیریت می‌شود)
+    tbody.innerHTML = '';
+
+    if (products.length === 0) {
+      emptyState.classList.remove('hidden');
+      updateStats();
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+
+    products.forEach((product, index) => {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-gray-50 transition-colors fade-in';
+      tr.innerHTML = `
+        <td class="px-6 py-4 text-sm text-gray-500">${index + 1}</td>
+        <td class="px-6 py-4 text-sm font-medium text-gray-800">${product.name}</td>
+        <td class="px-6 py-4 text-sm text-gray-600">${product.category || '-'}</td>
+        <td class="px-6 py-4 text-sm font-mono text-gray-800">${formatPrice(product.price)}</td>
+        <td class="px-6 py-4 text-sm text-gray-600">${product.stock}</td>
+        <td class="px-6 py-4">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+            ${product.status === 'فعال' ? 'bg-emerald-100 text-emerald-700' :
+              product.status === 'غیرفعال' ? 'bg-red-100 text-red-700' :
+              'bg-amber-100 text-amber-700'}">
+            ${product.status}
+          </span>
+        </td>
+        <td class="px-6 py-4 text-center">
+          <button onclick="deleteProduct(${index})" class="text-red-400 hover:text-red-600 transition-colors text-sm">
+            <i class="fas fa-trash-can"></i>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    updateStats();
+  }
+
+  // ====== حذف کالا ======
+  function deleteProduct(index) {
+    if (confirm(`آیا از حذف کالا "${products[index].name}" مطمئن هستید؟`)) {
+      products.splice(index, 1);
+      renderTable();
+    }
+  }
+  // قرار دادن تابع در scope سراسری برای onclick
+  window.deleteProduct = deleteProduct;
+
+  // ====== حذف همه ======
+  document.getElementById('clearAllBtn').addEventListener('click', function() {
+    if (products.length === 0) {
+      alert('لیست کالاها خالی است!');
+      return;
+    }
+    if (confirm('آیا از حذف همه کالاها مطمئن هستید؟')) {
+      products = [];
+      renderTable();
+    }
+  });
+
+  // ====== مدیریت مودال ======
+  function openModal() {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    // reset form
+    form.reset();
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  showBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  cancelBtn.addEventListener('click', closeModal);
+
+  // کلیک خارج از مودال
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // ====== ذخیره کالا ======
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('productName').value.trim();
+    const category = document.getElementById('productCategory').value.trim();
+    const price = document.getElementById('productPrice').value.trim();
+    const stock = document.getElementById('productStock').value.trim();
+    const status = document.getElementById('productStatus').value;
+
+    if (!name || !price || !stock) {
+      alert('لطفاً فیلدهای نام، قیمت و موجودی را پر کنید.');
+      return;
+    }
+
+    const newProduct = {
+      name,
+      category: category || 'متفرقه',
+      price: parseInt(price),
+      stock: parseInt(stock),
+      status
+    };
+
+    products.push(newProduct);
+    renderTable();
+    closeModal();
+
+    // نمایش پیام موفقیت (ساده)
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check ml-2"></i> افزوده شد';
+    btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+    }, 1500);
+  });
+
+  // ====== نمونه داده برای شروع (جدول خالی) ======
+  // برای نمایش خالی بودن، آرایه را خالی می‌گذاریم
+  // اما اگر بخواهید چند نمونه داشته باشید، خط زیر را فعال کنید:
+  // products = [
+  //   { name: 'لپ‌تاپ ایسوس', category: 'الکترونیک', price: 45000000, stock: 12, status: 'فعال' },
+  //   { name: 'هدفون بلوتوثی', category: 'صوتی', price: 3500000, stock: 8, status: 'فعال' },
+  //   { name: 'مانیتور سامسونگ', category: 'نمایشگر', price: 28000000, stock: 0, status: 'ناموجود' },
+  // ];
+  renderTable();
+</script>
+
+</body>
+</html>

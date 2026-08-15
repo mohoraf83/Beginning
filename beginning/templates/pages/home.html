@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اپلیکیشن حسابداری</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome (آیکون‌ها) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* تنظیمات پایه برای فونت و اسکرول */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f1f5f9;
+    }
+    /* اسکرول نوار کناری در صورت نیاز */
+    .sidebar-scroll {
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+    .sidebar-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 8px;
+    }
+    /* نشان دادن فعال بودن منو (نمونه) */
+    .menu-active {
+      background-color: #e2e8f0;
+      border-right: 4px solid #3b82f6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- کل صفحه با grid برای نوار کناری و محتوا -->
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- ========== نوار کناری (Sidebar) ========== -->
+    <aside class="w-72 bg-white shadow-xl border-l border-gray-200 flex-shrink-0 flex flex-col">
+      
+      <!-- هدر نوار کناری (لوگو/برند) -->
+      <div class="p-5 border-b border-gray-200 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white text-xl shadow-md">
+          <i class="fas fa-calculator"></i>
+        </div>
+        <span class="text-xl font-bold text-gray-800">حساب‌یار</span>
+        <span class="text-xs text-gray-400 mr-auto">v1.0</span>
+      </div>
+
+      <!-- منوهای نوار کناری (با scroll در صورت بلندی) -->
+      <nav class="flex-1 p-4 sidebar-scroll">
+        <ul class="space-y-2">
+                    <!-- فاکتور کالاها (آیکون + متن) -->
+          <li>
+            <a href="{% url 'goods.html' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200 menu-active">
+              <i class="fa-solid fa-basket-shopping"></i>
+              <span class="font-medium">مدیریت کالا</span>
+            </a>
+          </li>
+          <!-- فاکتور کالاها (آیکون + متن) -->
+          <li>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200 ">
+              <i class="fas fa-file-invoice text-blue-600 w-6 text-center"></i>
+              <span class="font-medium">فاکتور کالاها</span>
+            </a>
+          </li>
+          
+          <!-- ثبت مشتریان -->
+          <li>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200">
+              <i class="fas fa-users text-emerald-600 w-6 text-center"></i>
+              <span class="font-medium">ثبت مشتریان</span>
+              <span class="mr-auto text-xs text-gray-400">۱۲۴</span>
+            </a>
+          </li>
+          
+          <!-- تاریخچه -->
+          <li>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200">
+              <i class="fas fa-clock-rotate-left text-amber-600 w-6 text-center"></i>
+              <span class="font-medium">تاریخچه</span>
+              <span class="mr-auto text-xs text-gray-400">۲۸</span>
+            </a>
+          </li>
+
+          <!-- خط جداکننده -->
+          <li class="pt-4 mt-4 border-t border-gray-200"></li>
+
+          <!-- آیتم‌های اضافی (برای تکمیل ظاهر) -->
+          <li>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200">
+              <i class="fas fa-chart-pie text-purple-600 w-6 text-center"></i>
+              <span class="font-medium">گزارشات</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-all duration-200">
+              <i class="fas fa-gear text-gray-500 w-6 text-center"></i>
+              <span class="font-medium">تنظیمات</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- پایین نوار کناری (کاربر / خروج) -->
+      <div class="p-4 border-t border-gray-200">
+        <div class="flex items-center gap-3 px-2 py-2 rounded-lg bg-gray-50">
+          <div class="w-9 h-9 rounded-full bg-blue-200 flex items-center justify-center text-blue-700">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-semibold text-gray-800">مدیر سیستم</p>
+            <p class="text-xs text-gray-500">admin@account.ir</p>
+          </div>
+          <button class="text-gray-400 hover:text-red-500 transition-colors">
+            <i class="fas fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========== بخش اصلی محتوا ========== -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-8">
+
+      <!-- هدر محتوا (خوش‌آمدگویی و اقدامات سریع) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">داشبورد حسابداری</h1>
+          <p class="text-gray-500 text-sm mt-1">خلاصه فعالیت‌های امروز</p>
+        </div>
+        <div class="flex items-center gap-3 mt-4 sm:mt-0">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-2 text-sm font-medium">
+            <i class="fas fa-plus"></i>
+            فاکتور جدید
+          </button>
+          <button class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl shadow-sm transition-all text-sm font-medium flex items-center gap-2">
+            <i class="fas fa-file-pdf"></i>
+            خروجی
+          </button>
+        </div>
+      </div>
+
+      <!-- کارت‌های آماری نمونه (مربوط به حسابداری) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm">کل فاکتورها</p>
+            <p class="text-2xl font-bold text-gray-800">۳۴۲</p>
+            <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1 inline-block">+۱۲٪</span>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-xl">
+            <i class="fas fa-file-invoice"></i>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm">مشتریان</p>
+            <p class="text-2xl font-bold text-gray-800">۱۲۴</p>
+            <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1 inline-block">+۴</span>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-xl">
+            <i class="fas fa-user-group"></i>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm">درآمد امروز</p>
+            <p class="text-2xl font-bold text-gray-800">۴۲,۸۰۰,۰۰۰</p>
+            <span class="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full mt-1 inline-block">ریال</span>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 text-xl">
+            <i class="fas fa-toman"></i>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm">تاریخچه امروز</p>
+            <p class="text-2xl font-bold text-gray-800">۲۸</p>
+            <span class="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full mt-1 inline-block">ثبت</span>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 text-xl">
+            <i class="fas fa-clock"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- نمایش نمونه لیست فاکتورها / مشتریان / تاریخچه به عنوان پیش‌نمایش -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- بخش: فاکتورهای اخیر -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-gray-800"><i class="fas fa-file-invoice text-blue-600 ml-2"></i> آخرین فاکتورها</h2>
+            <a href="#" class="text-sm text-blue-600 hover:underline">مشاهده همه</a>
+          </div>
+          <ul class="divide-y divide-gray-100">
+            <li class="py-3 flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-800">فاکتور #۱۰۲۴</p>
+                <p class="text-xs text-gray-500">مشتری: شرکت الف</p>
+              </div>
+              <span class="text-sm font-bold text-emerald-700">۱۲,۴۰۰,۰۰۰</span>
+            </li>
+            <li class="py-3 flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-800">فاکتور #۱۰۲۳</p>
+                <p class="text-xs text-gray-500">مشتری: فروشگاه ب</p>
+              </div>
+              <span class="text-sm font-bold text-emerald-700">۸,۲۵۰,۰۰۰</span>
+            </li>
+            <li class="py-3 flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-800">فاکتور #۱۰۲۲</p>
+                <p class="text-xs text-gray-500">مشتری: سازمان ج</p>
+              </div>
+              <span class="text-sm font-bold text-emerald-700">۲۳,۰۰۰,۰۰۰</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- بخش: تاریخچه فعالیت‌ها -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-gray-800"><i class="fas fa-clock-rotate-left text-amber-600 ml-2"></i> تاریخچه</h2>
+            <a href="#" class="text-sm text-blue-600 hover:underline">مشاهده همه</a>
+          </div>
+          <ul class="divide-y divide-gray-100">
+            <li class="py-3 flex items-start gap-3">
+              <i class="fas fa-plus-circle text-emerald-500 mt-1"></i>
+              <div>
+                <p class="text-sm text-gray-800">فاکتور جدید #۱۰۲۴ برای <span class="font-medium">شرکت الف</span></p>
+                <p class="text-xs text-gray-400">۱۴:۳۰ - امروز</p>
+              </div>
+            </li>
+            <li class="py-3 flex items-start gap-3">
+              <i class="fas fa-pen text-blue-500 mt-1"></i>
+              <div>
+                <p class="text-sm text-gray-800">ویرایش اطلاعات <span class="font-medium">مشتری ب</span></p>
+                <p class="text-xs text-gray-400">۱۲:۱۵ - امروز</p>
+              </div>
+            </li>
+            <li class="py-3 flex items-start gap-3">
+              <i class="fas fa-trash-can text-red-400 mt-1"></i>
+              <div>
+                <p class="text-sm text-gray-800">حذف فاکتور #۱۰۲۰ (پیش‌نویس)</p>
+                <p class="text-xs text-gray-400">۱۰:۰۰ - امروز</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- بخش مشتریان برجسته (نمایش سریع) -->
+      <div class="mt-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-semibold text-gray-800"><i class="fas fa-users text-emerald-600 ml-2"></i> مشتریان برتر</h2>
+          <a href="#" class="text-sm text-blue-600 hover:underline">مدیریت مشتریان</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">الف</div>
+            <div>
+              <p class="text-sm font-medium">شرکت الف</p>
+              <p class="text-xs text-gray-500">۱۲ فاکتور</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+            <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-700 font-bold">ب</div>
+            <div>
+              <p class="text-sm font-medium">فروشگاه ب</p>
+              <p class="text-xs text-gray-500">۸ فاکتور</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+            <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold">ج</div>
+            <div>
+              <p class="text-sm font-medium">سازمان ج</p>
+              <p class="text-xs text-gray-500">۶ فاکتور</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- فوتر کوچک (اختیاری) -->
+      <div class="mt-8 text-center text-xs text-gray-400 border-t border-gray-200 pt-6">
+        <i class="fas fa-shield-alt ml-1"></i> اپلیکیشن حسابداری حساب‌یار · تمامی حقوق محفوظ است.
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>

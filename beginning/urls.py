@@ -5,6 +5,7 @@ from . import views  # از . استفاده کنید چون در same directory
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',  views.book, name='home'),
-    path('/', views.goods, name='goods'),
+    path('',  views.home,),
+    path('book/',  views.book, name='book'),
+    path('goods/', views.goods, name='goods'),
 ]
